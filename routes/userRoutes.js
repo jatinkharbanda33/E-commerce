@@ -1,0 +1,12 @@
+import express from "express";
+import protectRoute from '../middlewares/protectRoute.js';
+import { loginUser, logoutUser, signupUser, addNewAddress ,deleteAddress, getdefaultAddress, getAddress} from "../controllers/userController.js";
+const router=express.Router();
+router.post("/signup",signupUser);
+router.post("/login",loginUser);
+router.post("/logout",protectRoute,logoutUser);
+router.post("/newaddress",protectRoute,addNewAddress);
+router.post("/deleteaddress",protectRoute,deleteAddress);
+router.post("/getdefaultAddress",protectRoute,getdefaultAddress);
+router.post("/getAddress",protectRoute,getAddress);
+export default router;
