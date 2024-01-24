@@ -92,7 +92,7 @@ const defaultAddress = async () => {
     );
     if (isAlready.length != 0) {
       await db.query(
-        "UPDATE TABLE default_address SET address_id=? WHERE user_id=?",
+        "UPDATE default_address SET address_id=? WHERE user_id=?",
         [address_id, userid]
       );
     } else {
