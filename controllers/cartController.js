@@ -90,7 +90,6 @@ const updatecartitemquantity = async (req, res) => {
     if (new_quantity <= 0) {
       return res.status(400).json({ error: "Invalid quantity" });
     }
-    console.log("hello 1");
     const [currItem, currItemfields] = await db.query(
       "SELECT a.*,b.price ,b.quantity as total_quantity FROM shopping_cart_item a LEFT JOIN product_item b ON a.product_id=b.product_id WHERE a.id=?",
       [shopping_cart_item_id]
@@ -98,7 +97,6 @@ const updatecartitemquantity = async (req, res) => {
     if (currItem.length == 0) {
       return res.status(400).json({ error: "Invalid Item Id" });
     }
-    console.log("hello 2");
     if (currItem[0].total_quantity + currItem[0].quantity - new_quantity < 0) {
       return res.status(400).json({ error: "ORDER LIMIT EXCEEDS" });
     }
@@ -124,4 +122,22 @@ const updatecartitemquantity = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 };
-export { addtoCart, deletefromCart, updatecartitemquantity };
+const removecart=async(req,res)=>{
+    try{
+        const cart_id=req.params.id;
+        if(!cart_id) return res.status(400).json({error:"Invalid Request"});
+        const db=await getDb();
+        await db.query("UPDATE product_item a JOIN shopping_cart_item b ON a.product_id = b.product_id SET a.quantity = a.quantity + b.quantity WHERE b.shopping_cart_id = ?",[cart_id]);
+        await db.query("DELETE FROM shopping_cart_item WHERE shopping_cart_id=?",[cart_id]);
+        await db.query("DELETE FROM shopping_cart WHERE id=?",[cart_id]);
+        return res.status(200).json({message:"Cart is empty now"});
+    }
+    catch(err){
+        return res.status(500).json({ error: err.message });
+
+    }
+}
+export { addtoCart, deletefromCart, updatecartitemquantity,removecart};
+
+
+// cart delete // cart_items mn hai unko product quanitity mn add krna hai
