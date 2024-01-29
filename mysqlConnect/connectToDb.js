@@ -17,3 +17,4 @@ const getDb=async()=>{
   return _db;
 }
 export  {connectToDb,getDb};
+

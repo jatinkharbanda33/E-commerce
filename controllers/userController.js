@@ -57,7 +57,7 @@ const logoutUser = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 };
-const addNewAddress = async () => {
+const addNewAddress = async (req,res) => {
   try {
     const db = await getDb();
     const userid = req.user.id;
@@ -81,7 +81,7 @@ const addNewAddress = async () => {
     return res.status(500).json({ error: err.message });
   }
 };
-const defaultAddress = async () => {
+const defaultAddress = async (req,res) => {
   try {
     const userid = req.user.id;
     const {address_id} = req.body;
@@ -106,7 +106,7 @@ const defaultAddress = async () => {
     return res.status(200).json({ error: err.message });
   }
 };
-const deleteAddress = async () => {
+const deleteAddress = async (req,res) => {
   try {
     const userid = req.user.id;
     const {address_id} = req.body;
@@ -127,7 +127,7 @@ const deleteAddress = async () => {
     return res.status(200).json({ error: err.message });
   }
 };
-const getdefaultAddress = async () => {
+const getdefaultAddress = async (req,res) => {
   try {
     const userid = req.user.id;
     const db = await getDb();
@@ -144,7 +144,7 @@ const getdefaultAddress = async () => {
     return res.status(200).json({ error: err.message });
   }
 };
-const getAddress = async () => {
+const getAddress = async (req,res) => {
   try {
     const {address_id}=req.body;
     const db = await getDb();
