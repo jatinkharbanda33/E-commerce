@@ -35,7 +35,7 @@ const loginUser = async (req, res) => {
     const user = isUser[0];
     const verifypassword = await bcrypt.compare(password, user.password);
     if (!verifypassword) res.status(400).json({ error: "Wrong Password" });
-    const authtoken = generateToken(user.id);
+    const authtoken = generateToken(user.id,hashedpassword);
     await db.query("UPDATE USERS SET token=? WHERE id=?", [authtoken, user.id]);
     res.status(200).json({
       _id: user._id,

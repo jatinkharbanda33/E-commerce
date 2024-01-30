@@ -9,7 +9,6 @@ const addtoCart = async (req, res) => {
       "SELECT * FROM product_item WHERE product_id=?",
       [product_id]
     );
-    console.log(productItem[0]);
     if (productItem[0].quantity < quantity)
       return res.status(400).json({ error: "Invalid Item Quantity" });
     const [haveCart, cartfields] = await db.query(
