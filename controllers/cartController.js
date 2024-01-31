@@ -16,6 +16,7 @@ const addtoCart = async (req, res) => {
       [user_id]
     );
     let newShopingCartItemId;
+    let cartid;
     if (haveCart.length == 0) {
       const [newCart, newcartfields] = await db.query(
         "INSERT INTO shopping_cart(user_id,product_count,cart_value) VALUES(?,?,?)",
@@ -26,6 +27,7 @@ const addtoCart = async (req, res) => {
         [product_id, quantity, newCart.insertId]
       );
       newShopingCartItemId = addedItem.insertId;
+      cartid=newCart.insertId;
     } else {
       await db.query(
         "UPDATE  shopping_cart SET product_count=product_count+?,cart_value=cart_value+? WHERE id=? ",
@@ -36,14 +38,14 @@ const addtoCart = async (req, res) => {
         [product_id, quantity, haveCart[0].id, quantity]
       );
       newShopingCartItemId = addedItem.insertId;
+      cartid=haveCart[0].id;
     }
 
     await db.query(
       "UPDATE  product_item SET quantity=quantity-? WHERE product_id=?",
       [quantity, product_id]
     );
-    console.log(haveCart[0]);
-    return res.status(200).json({ cart_item_id: newShopingCartItemId });
+    return res.status(200).json({ cart_item_id: newShopingCartItemId , cart_id:cartid});
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

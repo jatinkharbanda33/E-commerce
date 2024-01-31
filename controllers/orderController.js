@@ -1,34 +1,34 @@
 import { getDb } from "../mysqlConnect/connectToDb.js";
 
-const addproducts=async(req,res)=>{
+const getuserorders=async(req,res)=>{
     try{
-        const shop_order_id=req.params.id;
-        if(!shop_order_id) return res.status(400).json({error:"Invalid Request"});
-        const userId=req.user.id;
-        const db =await getDb();
-        const[products,productsfield]=await db.query("SELECT * FROM shopping_cart_item WHERE shopping_cart_id=(SELECT shopping_cart_id FROM shop_order WHERE id=?)",[shop_order_id]);
-        for(let i=0;i<products.length;i++){
-            await db.query("INSERT INTO trackingstatus(user_id,product_id,order_id,quantity) VALUES(?,?,?,?)",[userId,products[i].product_id,shop_order_id,products[i].quantity]);
-        }
-        return res.status(200).json({message:"Order Placed Successfully"});
-    }
-    catch(err){
-        return res.status(500).json({error:err.message});
-    }
-}
-const getproductstatus=async(req,res)=>{
-    try{
-        const shop_order_id=req.query.orderid;
-        const product_id=req.query.productid;
-        if(!shop_order_id || !product_id) return res.status(400).json({error:"Invalid Request"});
         const db=await getDb();
-        const [result,resultfields]=await db.query("SELECT status from trackingstatus WHERE product_id=? AND order_id=?",[product_id,shop_order_id]);
-        if(result.length==0) return res.status(200).json({error:"Invalid request"});
-        return res.status(200).json({status:result[0].status});
+        const userid=req.user.id;
+        const limit=req.query.limit || 10;
+        const skip=req.query.skip || 0;
+        const [orders,ordersfields]=await db.query("SELECT id,product_count,cart_value,address_id,order_date,order_status_id from shopping_cart WHERE status=1 AND user_id=? ORDER BY order_date DESC LIMIT ? OFFSET ?",[userid,limit,skip]);
+        return res.status(200).json(orders);
+        
     }
     catch(err){
         return res.status(500).json({error:err.message});
 
     }
 }
-export {addproducts,getproductstatus};
+const getproductsoforder=async(req,res)=>{
+    try{
+        const shopping_cart_id=req.params.id;
+        const userid=req.user.id;
+        const db=await getDb();
+        const [products,productsfields]=await db.query("SELECT a.product_id, a.quantity FROM shopping_cart_item a JOIN shopping_cart b ON a.shopping_cart_id = b.id WHERE b.status = 1 AND b.user_id = ? AND b.id = ?",[userid,shopping_cart_id]);
+        if(products.length==0){
+            return res.status(400).json({error:"Invalid Request"});
+        }
+        return res.status(200).json(products);  
+    }
+    catch(err){
+        return res.status(500).json({error:err.message});
+
+    }
+}
+export {getuserorders,getproductsoforder};

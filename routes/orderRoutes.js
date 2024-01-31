@@ -1,7 +1,7 @@
 import express from "express";
 import protectRoute from '../middlewares/protectRoute.js';
-import { addproducts, getproductstatus } from "../controllers/orderController.js";
+import {getproductsoforder, getuserorders } from "../controllers/orderController.js";
 const router=express.Router();
-router.post("/addproducts/:id",protectRoute,addproducts);
-router.post("/getproductstatus",protectRoute,getproductstatus)
+router.post("/getuserorders",protectRoute,getuserorders)
+router.post("/getproductsoforder/:id",protectRoute,getproductsoforder)
 export default router;
