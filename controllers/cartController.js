@@ -12,15 +12,15 @@ const addtoCart = async (req, res) => {
     if (productItem[0].quantity < quantity)
       return res.status(400).json({ error: "Invalid Item Quantity" });
     const [haveCart, cartfields] = await db.query(
-      "SELECT * FROM shopping_cart WHERE user_id=? AND status=0",
-      [user_id]
+      "SELECT * FROM shopping_cart WHERE user_id=? AND status=0 AND merchant_id=?",
+      [user_id,productItem[0].merchant_id]
     );
     let newShopingCartItemId;
     let cartid;
     if (haveCart.length == 0) {
       const [newCart, newcartfields] = await db.query(
-        "INSERT INTO shopping_cart(user_id,product_count,cart_value) VALUES(?,?,?)",
-        [user_id, quantity, quantity * productItem[0].price]
+        "INSERT INTO shopping_cart(user_id,product_count,cart_value,merchant_id) VALUES(?,?,?,?)",
+        [user_id, quantity, quantity * productItem[0].price,productItem[0].merchant_id]
       );
       const [addedItem, addedItemfields] = await db.query(
         "INSERT INTO shopping_cart_item (product_id,quantity,shopping_cart_id) VALUES(?,?,?)",
@@ -35,8 +35,9 @@ const addtoCart = async (req, res) => {
       );
       const [addedItem, addedItemfields] = await db.query(
         "INSERT INTO shopping_cart_item (product_id,quantity,shopping_cart_id) VALUES(?,?,?) ON DUPLICATE KEY UPDATE quantity=quantity+?",
-        [product_id, quantity, haveCart[0].id, quantity]
+        [product_id, quantity, haveCart[0].id,quantity]
       );
+
       newShopingCartItemId = addedItem.insertId;
       cartid=haveCart[0].id;
     }
@@ -135,10 +136,21 @@ const removecart=async(req,res)=>{
     }
     catch(err){
         return res.status(500).json({ error: err.message });
-
     }
 }
-export { addtoCart, deletefromCart, updatecartitemquantity,removecart};
+const getusercart=async(req,res)=>{
+  try{
+    const userid=req.user.id;
+    const [usercarts,usercartsfield]=await db.query("SELECT * FROM shopping_cart WHERE user_id=? AND status=0",[userid]);
+    return res.status(200).json(usercarts);
+
+  }
+  catch(err){
+    return res.status(500).json({ error: err.message });
+
+  }
+}
+export { addtoCart, deletefromCart, updatecartitemquantity,removecart,getusercart};
 
 
 // cart delete // cart_items mn hai unko product quanitity mn add krna hai

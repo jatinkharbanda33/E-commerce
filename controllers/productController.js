@@ -17,11 +17,11 @@ const getaproduct=async(req,res)=>{
 const addnewproduct=async(req,res)=>{
     try{
         const db=await getDb();
-        const {name,category,image,description,price,quantity}=req.body;
+        const {name,category,image,description,price,quantity,merchant_id}=req.body;
         console.log(name);
         const [newproduct,itfields]=await db.query("INSERT INTO product(category_id,name,description,product_image) VALUES(?,?,?,?)",[category,name,description,image]);
       
-        await db.query("INSERT INTO product_item(product_id,quantity,price) VALUES(?,?,?)",[newproduct.insertId,quantity,price]);
+        await db.query("INSERT INTO product_item(product_id,quantity,price,merchant_id) VALUES(?,?,?,?)",[newproduct.insertId,quantity,price,merchant_id]);
         return res.status(200).json({message:"Product Added Successfully"});
     }
     catch(err){

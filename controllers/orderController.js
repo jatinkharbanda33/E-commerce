@@ -6,9 +6,8 @@ const getuserorders=async(req,res)=>{
         const userid=req.user.id;
         const limit=req.query.limit || 10;
         const skip=req.query.skip || 0;
-        const [orders,ordersfields]=await db.query("SELECT id,product_count,cart_value,address_id,order_date,order_status_id from shopping_cart WHERE status=1 AND user_id=? ORDER BY order_date DESC LIMIT ? OFFSET ?",[userid,limit,skip]);
+        const [orders,ordersfields]=await db.query("SELECT id,product_count,cart_value,address_id,order_date,order_status_id from shopping_cart WHERE status=1 AND user_id=? ORDER BY id DESC LIMIT ? OFFSET ?",[userid,limit,skip]);
         return res.status(200).json(orders);
-        
     }
     catch(err){
         return res.status(500).json({error:err.message});
