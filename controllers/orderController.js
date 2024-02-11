@@ -11,7 +11,6 @@ const getuserorders=async(req,res)=>{
     }
     catch(err){
         return res.status(500).json({error:err.message});
-
     }
 }
 const getproductsoforder=async(req,res)=>{

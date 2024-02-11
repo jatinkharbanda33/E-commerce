@@ -1,4 +1,3 @@
-import { response } from "express";
 import { getDb } from "../mysqlConnect/connectToDb.js";
 const addtoCart = async (req, res) => {
   try {
@@ -75,7 +74,6 @@ const deletefromCart = async (req, res) => {
     await db.query("DELETE FROM shopping_cart_item WHERE id=?", [
       shopping_cart_item_id,
     ]);
-    console.log(cartItem[0]);
     return res.status(200).json({ message: "Deleted" });
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -147,10 +145,6 @@ const getusercart=async(req,res)=>{
   }
   catch(err){
     return res.status(500).json({ error: err.message });
-
   }
 }
 export { addtoCart, deletefromCart, updatecartitemquantity,removecart,getusercart};
-
-
-// cart delete // cart_items mn hai unko product quanitity mn add krna hai

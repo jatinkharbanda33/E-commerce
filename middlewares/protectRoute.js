@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 const protectRoute = async (req, res, next) => {
     try {
        const headers = req.headers.authorization;
-   
        if (!headers || !headers.startsWith("Bearer ")) {
          return res.status(401).json({ message: "Unauthorized" });
        }
