@@ -35,7 +35,7 @@ const loginUser = async (req, res) => {
     const user = isUser[0];
     const verifypassword = await bcrypt.compare(password, user.password);
     if (!verifypassword) res.status(400).json({ error: "Wrong Password" });
-    const authtoken = generateToken(user.id,hashedpassword);
+    const authtoken = generateToken(user.id);
     await db.query("UPDATE USERS SET token=? WHERE id=?", [authtoken, user.id]);
     res.status(200).json({
       _id: user._id,
@@ -76,7 +76,7 @@ const addNewAddress = async (req,res) => {
         country,
       ]
     );
-    return res.status(200).json({ message: "Address Successfully added" });
+    return res.status(201).json({ message: "Address Successfully added" });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -103,7 +103,7 @@ const defaultAddress = async (req,res) => {
     }
     return res.status(200).json({ message: "Default address changed" });
   } catch (err) {
-    return res.status(200).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 const deleteAddress = async (req,res) => {
@@ -124,7 +124,7 @@ const deleteAddress = async (req,res) => {
     await db.query("DELETE FROM address WHERE address_id=?", [address_id]);
     return res.status(200).json({ message: "Address Deleted" });
   } catch (err) {
-    return res.status(200).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 const getdefaultAddress = async (req,res) => {
@@ -136,12 +136,12 @@ const getdefaultAddress = async (req,res) => {
       [userid]
     );
     if(isAlready.length==0){
-      return res.status(200).json({message:"You dont have a default address"});
+      return res.status(400).json({message:"You dont have a default address"});
     }
     const [address,itsfields]=await db.query('SELECT * FROM address where address_id=?',[isAlready[0].address_id]);
     return res.status(200).json(address[0]);
   } catch (err) {
-    return res.status(200).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 const getAddress = async (req,res) => {
@@ -151,7 +151,7 @@ const getAddress = async (req,res) => {
     const [address,itsfields]=await db.query('SELECT * FROM address where address_id=?',[address_id]);
     return res.status(200).json(address[0]);
   } catch (err) {
-    return res.status(200).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 export {
